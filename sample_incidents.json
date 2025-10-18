@@ -1,0 +1,644 @@
+[
+  {
+    "incident_id": "INC-10000",
+    "title": "API Gateway 504 Timeout - Upstream Service Slow",
+    "description": "Users reporting API timeouts. API Gateway returning 504 Gateway Timeout errors. Backend services appear healthy but response times elevated from 200ms to 8000ms.",
+    "severity": "P1",
+    "incident_type": "application",
+    "status": "resolved",
+    "affected_systems": [
+      "api-gateway",
+      "order-service",
+      "postgres-db"
+    ],
+    "error_messages": "upstream timed out (110: Connection timed out) while reading response header from upstream\n504 Gateway Time-out",
+    "technical_terms": [
+      "504 timeout",
+      "N+1 query",
+      "database index",
+      "upstream timeout",
+      "slow query"
+    ],
+    "resolution_steps": "1. Checked API Gateway logs - timeouts after 30s\n2. Investigated backend service - found N+1 database query problem\n3. Analyzed slow query log - missing index on orders.user_id\n4. Created index: CREATE INDEX idx_orders_user_id ON orders(user_id)\n5. Query time dropped from 7.2s to 45ms\n6. Added database query performance monitoring",
+    "resolution_time_minutes": 38,
+    "root_cause": "Recent code deployment introduced N+1 query pattern without proper database indexing",
+    "source_type": "incident",
+    "created_at": "2025-05-15T07:42:55.349611",
+    "resolved_at": "2025-05-15T08:20:55.349611",
+    "updated_at": "2025-05-15T08:20:55.349611",
+    "tags": [
+      "performance",
+      "database",
+      "indexing"
+    ]
+  },
+  {
+    "incident_id": "INC-10001",
+    "title": "Memory Leak in User Service causing OOM",
+    "description": "User service pods crashing every 2-3 hours with OutOfMemoryError. Heap dumps show excessive String objects in memory. GC logs indicate heap exhaustion before crash.",
+    "severity": "P0",
+    "incident_type": "application",
+    "status": "resolved",
+    "affected_systems": [
+      "user-service",
+      "kubernetes-cluster"
+    ],
+    "error_messages": "java.lang.OutOfMemoryError: Java heap space\nat java.util.HashMap.resize(HashMap.java:704)\nHeap dump file created [2789453312 bytes]",
+    "technical_terms": [
+      "OutOfMemoryError",
+      "heap dump",
+      "memory leak",
+      "garbage collection",
+      "cache eviction"
+    ],
+    "resolution_steps": "1. Analyzed heap dump with Eclipse MAT - found 850MB of String objects\n2. Identified bug in user cache implementation - not clearing expired entries\n3. Applied fix: Added scheduled task to evict expired cache entries every 5 minutes\n4. Increased heap size from 2GB to 4GB as temporary measure\n5. Deployed fix to production\n6. Monitored heap usage - now stable at 1.2GB",
+    "resolution_time_minutes": 85,
+    "root_cause": "Cache implementation bug causing memory leak - expired user sessions never evicted from memory",
+    "source_type": "incident",
+    "created_at": "2025-09-25T09:42:55.349611",
+    "resolved_at": "2025-09-25T11:07:55.349611",
+    "updated_at": "2025-09-25T11:07:55.349611",
+    "tags": [
+      "memory",
+      "java",
+      "production-outage"
+    ]
+  },
+  {
+    "incident_id": "INC-10002",
+    "title": "Memory Leak in User Service causing OOM",
+    "description": "User service pods crashing every 2-3 hours with OutOfMemoryError. Heap dumps show excessive String objects in memory. GC logs indicate heap exhaustion before crash.",
+    "severity": "P0",
+    "incident_type": "application",
+    "status": "resolved",
+    "affected_systems": [
+      "user-service",
+      "kubernetes-cluster"
+    ],
+    "error_messages": "java.lang.OutOfMemoryError: Java heap space\nat java.util.HashMap.resize(HashMap.java:704)\nHeap dump file created [2789453312 bytes]",
+    "technical_terms": [
+      "OutOfMemoryError",
+      "heap dump",
+      "memory leak",
+      "garbage collection",
+      "cache eviction"
+    ],
+    "resolution_steps": "1. Analyzed heap dump with Eclipse MAT - found 850MB of String objects\n2. Identified bug in user cache implementation - not clearing expired entries\n3. Applied fix: Added scheduled task to evict expired cache entries every 5 minutes\n4. Increased heap size from 2GB to 4GB as temporary measure\n5. Deployed fix to production\n6. Monitored heap usage - now stable at 1.2GB",
+    "resolution_time_minutes": 85,
+    "root_cause": "Cache implementation bug causing memory leak - expired user sessions never evicted from memory",
+    "source_type": "incident",
+    "created_at": "2025-09-25T03:42:55.349611",
+    "resolved_at": "2025-09-25T05:07:55.349611",
+    "updated_at": "2025-09-25T05:07:55.349611",
+    "tags": [
+      "memory",
+      "java",
+      "production-outage"
+    ]
+  },
+  {
+    "incident_id": "INC-10003",
+    "title": "API Gateway 504 Timeout - Upstream Service Slow",
+    "description": "Users reporting API timeouts. API Gateway returning 504 Gateway Timeout errors. Backend services appear healthy but response times elevated from 200ms to 8000ms.",
+    "severity": "P1",
+    "incident_type": "application",
+    "status": "resolved",
+    "affected_systems": [
+      "api-gateway",
+      "order-service",
+      "postgres-db"
+    ],
+    "error_messages": "upstream timed out (110: Connection timed out) while reading response header from upstream\n504 Gateway Time-out",
+    "technical_terms": [
+      "504 timeout",
+      "N+1 query",
+      "database index",
+      "upstream timeout",
+      "slow query"
+    ],
+    "resolution_steps": "1. Checked API Gateway logs - timeouts after 30s\n2. Investigated backend service - found N+1 database query problem\n3. Analyzed slow query log - missing index on orders.user_id\n4. Created index: CREATE INDEX idx_orders_user_id ON orders(user_id)\n5. Query time dropped from 7.2s to 45ms\n6. Added database query performance monitoring",
+    "resolution_time_minutes": 38,
+    "root_cause": "Recent code deployment introduced N+1 query pattern without proper database indexing",
+    "source_type": "incident",
+    "created_at": "2025-07-26T04:42:55.349611",
+    "resolved_at": "2025-07-26T05:20:55.349611",
+    "updated_at": "2025-07-26T05:20:55.349611",
+    "tags": [
+      "performance",
+      "database",
+      "indexing"
+    ]
+  },
+  {
+    "incident_id": "INC-10004",
+    "title": "Database Connection Pool Exhausted",
+    "description": "Users reporting 500 errors on checkout page. Error logs show: 'HikariCP - Connection is not available, request timed out after 30000ms'. Connection pool size currently at 20. Peak traffic time.",
+    "severity": "P1",
+    "incident_type": "database",
+    "status": "resolved",
+    "affected_systems": [
+      "checkout-service",
+      "postgres-primary"
+    ],
+    "error_messages": "java.sql.SQLTransientConnectionException: HikariCP - Connection is not available\nCaused by: java.sql.SQLException: Timeout after 30000ms",
+    "technical_terms": [
+      "HikariCP",
+      "connection pool",
+      "SQLTransientConnectionException",
+      "timeout"
+    ],
+    "resolution_steps": "1. Increased HikariCP maximum pool size from 20 to 50 in application.properties\n2. Increased minimum idle connections from 10 to 25\n3. Added connection leak detection with 60s threshold\n4. Deployed config change via rolling update\n5. Monitored connection pool metrics - utilization dropped from 100% to 45%",
+    "resolution_time_minutes": 12,
+    "root_cause": "Traffic spike exceeded connection pool capacity during flash sale event",
+    "source_type": "incident",
+    "created_at": "2025-08-09T01:42:55.349611",
+    "resolved_at": "2025-08-09T01:54:55.349611",
+    "updated_at": "2025-08-09T01:54:55.349611",
+    "tags": [
+      "database",
+      "performance",
+      "connection-pool"
+    ]
+  },
+  {
+    "incident_id": "INC-10005",
+    "title": "Database Connection Pool Exhausted",
+    "description": "Users reporting 500 errors on checkout page. Error logs show: 'HikariCP - Connection is not available, request timed out after 30000ms'. Connection pool size currently at 20. Peak traffic time.",
+    "severity": "P1",
+    "incident_type": "database",
+    "status": "resolved",
+    "affected_systems": [
+      "checkout-service",
+      "postgres-primary"
+    ],
+    "error_messages": "java.sql.SQLTransientConnectionException: HikariCP - Connection is not available\nCaused by: java.sql.SQLException: Timeout after 30000ms",
+    "technical_terms": [
+      "HikariCP",
+      "connection pool",
+      "SQLTransientConnectionException",
+      "timeout"
+    ],
+    "resolution_steps": "1. Increased HikariCP maximum pool size from 20 to 50 in application.properties\n2. Increased minimum idle connections from 10 to 25\n3. Added connection leak detection with 60s threshold\n4. Deployed config change via rolling update\n5. Monitored connection pool metrics - utilization dropped from 100% to 45%",
+    "resolution_time_minutes": 12,
+    "root_cause": "Traffic spike exceeded connection pool capacity during flash sale event",
+    "source_type": "incident",
+    "created_at": "2025-09-30T12:42:55.349611",
+    "resolved_at": "2025-09-30T12:54:55.349611",
+    "updated_at": "2025-09-30T12:54:55.349611",
+    "tags": [
+      "database",
+      "performance",
+      "connection-pool"
+    ]
+  },
+  {
+    "incident_id": "INC-10006",
+    "title": "API Gateway 504 Timeout - Upstream Service Slow",
+    "description": "Users reporting API timeouts. API Gateway returning 504 Gateway Timeout errors. Backend services appear healthy but response times elevated from 200ms to 8000ms.",
+    "severity": "P1",
+    "incident_type": "application",
+    "status": "resolved",
+    "affected_systems": [
+      "api-gateway",
+      "order-service",
+      "postgres-db"
+    ],
+    "error_messages": "upstream timed out (110: Connection timed out) while reading response header from upstream\n504 Gateway Time-out",
+    "technical_terms": [
+      "504 timeout",
+      "N+1 query",
+      "database index",
+      "upstream timeout",
+      "slow query"
+    ],
+    "resolution_steps": "1. Checked API Gateway logs - timeouts after 30s\n2. Investigated backend service - found N+1 database query problem\n3. Analyzed slow query log - missing index on orders.user_id\n4. Created index: CREATE INDEX idx_orders_user_id ON orders(user_id)\n5. Query time dropped from 7.2s to 45ms\n6. Added database query performance monitoring",
+    "resolution_time_minutes": 38,
+    "root_cause": "Recent code deployment introduced N+1 query pattern without proper database indexing",
+    "source_type": "incident",
+    "created_at": "2025-04-24T06:42:55.349611",
+    "resolved_at": "2025-04-24T07:20:55.349611",
+    "updated_at": "2025-04-24T07:20:55.349611",
+    "tags": [
+      "performance",
+      "database",
+      "indexing"
+    ]
+  },
+  {
+    "incident_id": "INC-10007",
+    "title": "Redis Cluster Split-Brain causing data inconsistency",
+    "description": "Multiple Redis master nodes detected. Writes going to different masters causing data conflicts. Client applications reporting inconsistent user session data.",
+    "severity": "P0",
+    "incident_type": "database",
+    "status": "resolved",
+    "affected_systems": [
+      "redis-cluster",
+      "session-store"
+    ],
+    "error_messages": "READONLY You can't write against a read only replica.\nCluster state: fail\nNot all cluster slots are covered",
+    "technical_terms": [
+      "Redis",
+      "split-brain",
+      "cluster failover",
+      "sentinel",
+      "network partition"
+    ],
+    "resolution_steps": "1. Checked Redis Sentinel logs - network partition 15 minutes ago\n2. Identified split-brain: 2 masters for same shard\n3. Stopped all writes by enabling maintenance mode\n4. Manually failed over to correct master using CLUSTER FAILOVER\n5. Resync'd replica nodes\n6. Verified cluster topology with CLUSTER NODES\n7. Re-enabled writes after validation",
+    "resolution_time_minutes": 45,
+    "root_cause": "Network partition between availability zones caused Redis Sentinel to elect new master while old master still responsive",
+    "source_type": "incident",
+    "created_at": "2025-05-16T23:42:55.349611",
+    "resolved_at": "2025-05-17T00:27:55.349611",
+    "updated_at": "2025-05-17T00:27:55.349611",
+    "tags": [
+      "redis",
+      "distributed-systems",
+      "data-consistency"
+    ]
+  },
+  {
+    "incident_id": "INC-10008",
+    "title": "API Gateway 504 Timeout - Upstream Service Slow",
+    "description": "Users reporting API timeouts. API Gateway returning 504 Gateway Timeout errors. Backend services appear healthy but response times elevated from 200ms to 8000ms.",
+    "severity": "P1",
+    "incident_type": "application",
+    "status": "resolved",
+    "affected_systems": [
+      "api-gateway",
+      "order-service",
+      "postgres-db"
+    ],
+    "error_messages": "upstream timed out (110: Connection timed out) while reading response header from upstream\n504 Gateway Time-out",
+    "technical_terms": [
+      "504 timeout",
+      "N+1 query",
+      "database index",
+      "upstream timeout",
+      "slow query"
+    ],
+    "resolution_steps": "1. Checked API Gateway logs - timeouts after 30s\n2. Investigated backend service - found N+1 database query problem\n3. Analyzed slow query log - missing index on orders.user_id\n4. Created index: CREATE INDEX idx_orders_user_id ON orders(user_id)\n5. Query time dropped from 7.2s to 45ms\n6. Added database query performance monitoring",
+    "resolution_time_minutes": 38,
+    "root_cause": "Recent code deployment introduced N+1 query pattern without proper database indexing",
+    "source_type": "incident",
+    "created_at": "2025-08-08T09:42:55.349611",
+    "resolved_at": "2025-08-08T10:20:55.349611",
+    "updated_at": "2025-08-08T10:20:55.349611",
+    "tags": [
+      "performance",
+      "database",
+      "indexing"
+    ]
+  },
+  {
+    "incident_id": "INC-10009",
+    "title": "Redis Cluster Split-Brain causing data inconsistency",
+    "description": "Multiple Redis master nodes detected. Writes going to different masters causing data conflicts. Client applications reporting inconsistent user session data.",
+    "severity": "P0",
+    "incident_type": "database",
+    "status": "resolved",
+    "affected_systems": [
+      "redis-cluster",
+      "session-store"
+    ],
+    "error_messages": "READONLY You can't write against a read only replica.\nCluster state: fail\nNot all cluster slots are covered",
+    "technical_terms": [
+      "Redis",
+      "split-brain",
+      "cluster failover",
+      "sentinel",
+      "network partition"
+    ],
+    "resolution_steps": "1. Checked Redis Sentinel logs - network partition 15 minutes ago\n2. Identified split-brain: 2 masters for same shard\n3. Stopped all writes by enabling maintenance mode\n4. Manually failed over to correct master using CLUSTER FAILOVER\n5. Resync'd replica nodes\n6. Verified cluster topology with CLUSTER NODES\n7. Re-enabled writes after validation",
+    "resolution_time_minutes": 45,
+    "root_cause": "Network partition between availability zones caused Redis Sentinel to elect new master while old master still responsive",
+    "source_type": "incident",
+    "created_at": "2025-09-20T13:42:55.349611",
+    "resolved_at": "2025-09-20T14:27:55.349611",
+    "updated_at": "2025-09-20T14:27:55.349611",
+    "tags": [
+      "redis",
+      "distributed-systems",
+      "data-consistency"
+    ]
+  },
+  {
+    "incident_id": "INC-10010",
+    "title": "API Gateway 504 Timeout - Upstream Service Slow",
+    "description": "Users reporting API timeouts. API Gateway returning 504 Gateway Timeout errors. Backend services appear healthy but response times elevated from 200ms to 8000ms.",
+    "severity": "P1",
+    "incident_type": "application",
+    "status": "resolved",
+    "affected_systems": [
+      "api-gateway",
+      "order-service",
+      "postgres-db"
+    ],
+    "error_messages": "upstream timed out (110: Connection timed out) while reading response header from upstream\n504 Gateway Time-out",
+    "technical_terms": [
+      "504 timeout",
+      "N+1 query",
+      "database index",
+      "upstream timeout",
+      "slow query"
+    ],
+    "resolution_steps": "1. Checked API Gateway logs - timeouts after 30s\n2. Investigated backend service - found N+1 database query problem\n3. Analyzed slow query log - missing index on orders.user_id\n4. Created index: CREATE INDEX idx_orders_user_id ON orders(user_id)\n5. Query time dropped from 7.2s to 45ms\n6. Added database query performance monitoring",
+    "resolution_time_minutes": 38,
+    "root_cause": "Recent code deployment introduced N+1 query pattern without proper database indexing",
+    "source_type": "incident",
+    "created_at": "2025-10-07T02:42:55.349611",
+    "resolved_at": "2025-10-07T03:20:55.349611",
+    "updated_at": "2025-10-07T03:20:55.349611",
+    "tags": [
+      "performance",
+      "database",
+      "indexing"
+    ]
+  },
+  {
+    "incident_id": "INC-10011",
+    "title": "API Gateway 504 Timeout - Upstream Service Slow",
+    "description": "Users reporting API timeouts. API Gateway returning 504 Gateway Timeout errors. Backend services appear healthy but response times elevated from 200ms to 8000ms.",
+    "severity": "P1",
+    "incident_type": "application",
+    "status": "resolved",
+    "affected_systems": [
+      "api-gateway",
+      "order-service",
+      "postgres-db"
+    ],
+    "error_messages": "upstream timed out (110: Connection timed out) while reading response header from upstream\n504 Gateway Time-out",
+    "technical_terms": [
+      "504 timeout",
+      "N+1 query",
+      "database index",
+      "upstream timeout",
+      "slow query"
+    ],
+    "resolution_steps": "1. Checked API Gateway logs - timeouts after 30s\n2. Investigated backend service - found N+1 database query problem\n3. Analyzed slow query log - missing index on orders.user_id\n4. Created index: CREATE INDEX idx_orders_user_id ON orders(user_id)\n5. Query time dropped from 7.2s to 45ms\n6. Added database query performance monitoring",
+    "resolution_time_minutes": 38,
+    "root_cause": "Recent code deployment introduced N+1 query pattern without proper database indexing",
+    "source_type": "incident",
+    "created_at": "2025-06-13T15:42:55.349611",
+    "resolved_at": "2025-06-13T16:20:55.349611",
+    "updated_at": "2025-06-13T16:20:55.349611",
+    "tags": [
+      "performance",
+      "database",
+      "indexing"
+    ]
+  },
+  {
+    "incident_id": "INC-10012",
+    "title": "Database Connection Pool Exhausted",
+    "description": "Users reporting 500 errors on checkout page. Error logs show: 'HikariCP - Connection is not available, request timed out after 30000ms'. Connection pool size currently at 20. Peak traffic time.",
+    "severity": "P1",
+    "incident_type": "database",
+    "status": "resolved",
+    "affected_systems": [
+      "checkout-service",
+      "postgres-primary"
+    ],
+    "error_messages": "java.sql.SQLTransientConnectionException: HikariCP - Connection is not available\nCaused by: java.sql.SQLException: Timeout after 30000ms",
+    "technical_terms": [
+      "HikariCP",
+      "connection pool",
+      "SQLTransientConnectionException",
+      "timeout"
+    ],
+    "resolution_steps": "1. Increased HikariCP maximum pool size from 20 to 50 in application.properties\n2. Increased minimum idle connections from 10 to 25\n3. Added connection leak detection with 60s threshold\n4. Deployed config change via rolling update\n5. Monitored connection pool metrics - utilization dropped from 100% to 45%",
+    "resolution_time_minutes": 12,
+    "root_cause": "Traffic spike exceeded connection pool capacity during flash sale event",
+    "source_type": "incident",
+    "created_at": "2025-04-30T23:42:55.349611",
+    "resolved_at": "2025-04-30T23:54:55.349611",
+    "updated_at": "2025-04-30T23:54:55.349611",
+    "tags": [
+      "database",
+      "performance",
+      "connection-pool"
+    ]
+  },
+  {
+    "incident_id": "INC-10013",
+    "title": "Kubernetes Node Not Ready - Disk Pressure",
+    "description": "Worker node showing NotReady status. Pods being evicted. kubectl describe node shows 'DiskPressure' condition. Root filesystem at 98% usage.",
+    "severity": "P1",
+    "incident_type": "infrastructure",
+    "status": "resolved",
+    "affected_systems": [
+      "k8s-worker-node-03",
+      "logging-system"
+    ],
+    "error_messages": "Node condition DiskPressure is now: True\nEvicting pod: user-service-7d4f8c9b5-9k2mp\nFailed to garbage collect: failed to evict pods",
+    "technical_terms": [
+      "Kubernetes",
+      "DiskPressure",
+      "pod eviction",
+      "log rotation",
+      "node NotReady"
+    ],
+    "resolution_steps": "1. SSH'd to problematic node\n2. Found /var/log/containers filling disk - 45GB of old logs\n3. Cleaned up old container logs: find /var/log/containers -type f -mtime +7 -delete\n4. Adjusted log rotation policy in /etc/logrotate.d/containers\n5. Node returned to Ready state automatically\n6. Implemented DaemonSet for automated log cleanup\n7. Added disk usage monitoring alerts at 80%",
+    "resolution_time_minutes": 25,
+    "root_cause": "Container logs not being rotated properly, filling node's root filesystem",
+    "source_type": "incident",
+    "created_at": "2025-05-01T10:42:55.349611",
+    "resolved_at": "2025-05-01T11:07:55.349611",
+    "updated_at": "2025-05-01T11:07:55.349611",
+    "tags": [
+      "kubernetes",
+      "disk-space",
+      "node-management"
+    ]
+  },
+  {
+    "incident_id": "INC-10014",
+    "title": "Database Connection Pool Exhausted",
+    "description": "Users reporting 500 errors on checkout page. Error logs show: 'HikariCP - Connection is not available, request timed out after 30000ms'. Connection pool size currently at 20. Peak traffic time.",
+    "severity": "P1",
+    "incident_type": "database",
+    "status": "resolved",
+    "affected_systems": [
+      "checkout-service",
+      "postgres-primary"
+    ],
+    "error_messages": "java.sql.SQLTransientConnectionException: HikariCP - Connection is not available\nCaused by: java.sql.SQLException: Timeout after 30000ms",
+    "technical_terms": [
+      "HikariCP",
+      "connection pool",
+      "SQLTransientConnectionException",
+      "timeout"
+    ],
+    "resolution_steps": "1. Increased HikariCP maximum pool size from 20 to 50 in application.properties\n2. Increased minimum idle connections from 10 to 25\n3. Added connection leak detection with 60s threshold\n4. Deployed config change via rolling update\n5. Monitored connection pool metrics - utilization dropped from 100% to 45%",
+    "resolution_time_minutes": 12,
+    "root_cause": "Traffic spike exceeded connection pool capacity during flash sale event",
+    "source_type": "incident",
+    "created_at": "2025-10-11T08:42:55.349611",
+    "resolved_at": "2025-10-11T08:54:55.349611",
+    "updated_at": "2025-10-11T08:54:55.349611",
+    "tags": [
+      "database",
+      "performance",
+      "connection-pool"
+    ]
+  },
+  {
+    "incident_id": "INC-10015",
+    "title": "Kubernetes Node Not Ready - Disk Pressure",
+    "description": "Worker node showing NotReady status. Pods being evicted. kubectl describe node shows 'DiskPressure' condition. Root filesystem at 98% usage.",
+    "severity": "P1",
+    "incident_type": "infrastructure",
+    "status": "resolved",
+    "affected_systems": [
+      "k8s-worker-node-03",
+      "logging-system"
+    ],
+    "error_messages": "Node condition DiskPressure is now: True\nEvicting pod: user-service-7d4f8c9b5-9k2mp\nFailed to garbage collect: failed to evict pods",
+    "technical_terms": [
+      "Kubernetes",
+      "DiskPressure",
+      "pod eviction",
+      "log rotation",
+      "node NotReady"
+    ],
+    "resolution_steps": "1. SSH'd to problematic node\n2. Found /var/log/containers filling disk - 45GB of old logs\n3. Cleaned up old container logs: find /var/log/containers -type f -mtime +7 -delete\n4. Adjusted log rotation policy in /etc/logrotate.d/containers\n5. Node returned to Ready state automatically\n6. Implemented DaemonSet for automated log cleanup\n7. Added disk usage monitoring alerts at 80%",
+    "resolution_time_minutes": 25,
+    "root_cause": "Container logs not being rotated properly, filling node's root filesystem",
+    "source_type": "incident",
+    "created_at": "2025-05-11T09:42:55.349611",
+    "resolved_at": "2025-05-11T10:07:55.349611",
+    "updated_at": "2025-05-11T10:07:55.349611",
+    "tags": [
+      "kubernetes",
+      "disk-space",
+      "node-management"
+    ]
+  },
+  {
+    "incident_id": "INC-10016",
+    "title": "Memory Leak in User Service causing OOM",
+    "description": "User service pods crashing every 2-3 hours with OutOfMemoryError. Heap dumps show excessive String objects in memory. GC logs indicate heap exhaustion before crash.",
+    "severity": "P0",
+    "incident_type": "application",
+    "status": "resolved",
+    "affected_systems": [
+      "user-service",
+      "kubernetes-cluster"
+    ],
+    "error_messages": "java.lang.OutOfMemoryError: Java heap space\nat java.util.HashMap.resize(HashMap.java:704)\nHeap dump file created [2789453312 bytes]",
+    "technical_terms": [
+      "OutOfMemoryError",
+      "heap dump",
+      "memory leak",
+      "garbage collection",
+      "cache eviction"
+    ],
+    "resolution_steps": "1. Analyzed heap dump with Eclipse MAT - found 850MB of String objects\n2. Identified bug in user cache implementation - not clearing expired entries\n3. Applied fix: Added scheduled task to evict expired cache entries every 5 minutes\n4. Increased heap size from 2GB to 4GB as temporary measure\n5. Deployed fix to production\n6. Monitored heap usage - now stable at 1.2GB",
+    "resolution_time_minutes": 85,
+    "root_cause": "Cache implementation bug causing memory leak - expired user sessions never evicted from memory",
+    "source_type": "incident",
+    "created_at": "2025-05-01T15:42:55.349611",
+    "resolved_at": "2025-05-01T17:07:55.349611",
+    "updated_at": "2025-05-01T17:07:55.349611",
+    "tags": [
+      "memory",
+      "java",
+      "production-outage"
+    ]
+  },
+  {
+    "incident_id": "INC-10017",
+    "title": "Redis Cluster Split-Brain causing data inconsistency",
+    "description": "Multiple Redis master nodes detected. Writes going to different masters causing data conflicts. Client applications reporting inconsistent user session data.",
+    "severity": "P0",
+    "incident_type": "database",
+    "status": "resolved",
+    "affected_systems": [
+      "redis-cluster",
+      "session-store"
+    ],
+    "error_messages": "READONLY You can't write against a read only replica.\nCluster state: fail\nNot all cluster slots are covered",
+    "technical_terms": [
+      "Redis",
+      "split-brain",
+      "cluster failover",
+      "sentinel",
+      "network partition"
+    ],
+    "resolution_steps": "1. Checked Redis Sentinel logs - network partition 15 minutes ago\n2. Identified split-brain: 2 masters for same shard\n3. Stopped all writes by enabling maintenance mode\n4. Manually failed over to correct master using CLUSTER FAILOVER\n5. Resync'd replica nodes\n6. Verified cluster topology with CLUSTER NODES\n7. Re-enabled writes after validation",
+    "resolution_time_minutes": 45,
+    "root_cause": "Network partition between availability zones caused Redis Sentinel to elect new master while old master still responsive",
+    "source_type": "incident",
+    "created_at": "2025-06-11T02:42:55.349611",
+    "resolved_at": "2025-06-11T03:27:55.349611",
+    "updated_at": "2025-06-11T03:27:55.349611",
+    "tags": [
+      "redis",
+      "distributed-systems",
+      "data-consistency"
+    ]
+  },
+  {
+    "incident_id": "INC-10018",
+    "title": "Memory Leak in User Service causing OOM",
+    "description": "User service pods crashing every 2-3 hours with OutOfMemoryError. Heap dumps show excessive String objects in memory. GC logs indicate heap exhaustion before crash.",
+    "severity": "P0",
+    "incident_type": "application",
+    "status": "resolved",
+    "affected_systems": [
+      "user-service",
+      "kubernetes-cluster"
+    ],
+    "error_messages": "java.lang.OutOfMemoryError: Java heap space\nat java.util.HashMap.resize(HashMap.java:704)\nHeap dump file created [2789453312 bytes]",
+    "technical_terms": [
+      "OutOfMemoryError",
+      "heap dump",
+      "memory leak",
+      "garbage collection",
+      "cache eviction"
+    ],
+    "resolution_steps": "1. Analyzed heap dump with Eclipse MAT - found 850MB of String objects\n2. Identified bug in user cache implementation - not clearing expired entries\n3. Applied fix: Added scheduled task to evict expired cache entries every 5 minutes\n4. Increased heap size from 2GB to 4GB as temporary measure\n5. Deployed fix to production\n6. Monitored heap usage - now stable at 1.2GB",
+    "resolution_time_minutes": 85,
+    "root_cause": "Cache implementation bug causing memory leak - expired user sessions never evicted from memory",
+    "source_type": "incident",
+    "created_at": "2025-07-29T12:42:55.349611",
+    "resolved_at": "2025-07-29T14:07:55.349611",
+    "updated_at": "2025-07-29T14:07:55.349611",
+    "tags": [
+      "memory",
+      "java",
+      "production-outage"
+    ]
+  },
+  {
+    "incident_id": "INC-10019",
+    "title": "Kubernetes Node Not Ready - Disk Pressure",
+    "description": "Worker node showing NotReady status. Pods being evicted. kubectl describe node shows 'DiskPressure' condition. Root filesystem at 98% usage.",
+    "severity": "P1",
+    "incident_type": "infrastructure",
+    "status": "resolved",
+    "affected_systems": [
+      "k8s-worker-node-03",
+      "logging-system"
+    ],
+    "error_messages": "Node condition DiskPressure is now: True\nEvicting pod: user-service-7d4f8c9b5-9k2mp\nFailed to garbage collect: failed to evict pods",
+    "technical_terms": [
+      "Kubernetes",
+      "DiskPressure",
+      "pod eviction",
+      "log rotation",
+      "node NotReady"
+    ],
+    "resolution_steps": "1. SSH'd to problematic node\n2. Found /var/log/containers filling disk - 45GB of old logs\n3. Cleaned up old container logs: find /var/log/containers -type f -mtime +7 -delete\n4. Adjusted log rotation policy in /etc/logrotate.d/containers\n5. Node returned to Ready state automatically\n6. Implemented DaemonSet for automated log cleanup\n7. Added disk usage monitoring alerts at 80%",
+    "resolution_time_minutes": 25,
+    "root_cause": "Container logs not being rotated properly, filling node's root filesystem",
+    "source_type": "incident",
+    "created_at": "2025-04-24T08:42:55.349611",
+    "resolved_at": "2025-04-24T09:07:55.349611",
+    "updated_at": "2025-04-24T09:07:55.349611",
+    "tags": [
+      "kubernetes",
+      "disk-space",
+      "node-management"
+    ]
+  }
+]
