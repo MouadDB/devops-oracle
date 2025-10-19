@@ -1,0 +1,20 @@
+# requirements.txt
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.12.3
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+
+# Google Cloud
+google-cloud-aiplatform==1.71.1
+vertexai==1.71.1
+
+# Elasticsearch
+elasticsearch==8.11.1
+
+# LangChain & LangGraph
+langchain==1.0.0
+langgraph==1.0.0
+
+# Utilities
+python-multipart==0.0.6
