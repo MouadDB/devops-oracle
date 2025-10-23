@@ -1,0 +1,119 @@
+# DevOps Oracle - CI/CD Pipeline
+
+substitutions:
+  _REGION: 'us-central1'
+  _BACKEND_SERVICE: 'devops-oracle-api'
+  _FRONTEND_SERVICE: 'devops-oracle-frontend'
+  _ARTIFACT_REGISTRY: 'devops-oracle'
+
+steps:
+  # Step 1: Build Backend Docker Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-backend'
+    args:
+      - 'build'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/backend:${SHORT_SHA}'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/backend:latest'
+      - './backend'
+    waitFor: ['-']
+
+  # Step 2: Build Frontend Docker Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-frontend'
+    args:
+      - 'build'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/frontend:${SHORT_SHA}'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/frontend:latest'
+      - '--build-arg'
+      - 'VITE_API_URL=https://${_BACKEND_SERVICE}-${_CLOUD_RUN_SERVICE_ACCOUNT_HASH}-uc.a.run.app'
+      - './client'
+    waitFor: ['-']
+
+  # Step 3: Push Backend Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-backend'
+    args:
+      - 'push'
+      - '--all-tags'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/backend'
+    waitFor: ['build-backend']
+
+  # Step 4: Push Frontend Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-frontend'
+    args:
+      - 'push'
+      - '--all-tags'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/frontend'
+    waitFor: ['build-frontend']
+
+  # Step 5: Deploy Backend to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-backend'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - '${_BACKEND_SERVICE}'
+      - '--image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/backend:${SHORT_SHA}'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--memory=2Gi'
+      - '--cpu=2'
+      - '--timeout=60s'
+      - '--max-instances=10'
+      - '--min-instances=1'
+      - '--set-env-vars=GOOGLE_CLOUD_PROJECT=${PROJECT_ID},GOOGLE_CLOUD_REGION=${_REGION}'
+      - '--set-secrets=ELASTIC_CLOUD_ID=elastic-cloud-id:latest,ELASTIC_API_KEY=elastic-api-key:latest,GOOGLE_APPLICATION_CREDENTIALS=vertex-ai-key:latest'
+    waitFor: ['push-backend']
+
+  # Step 6: Deploy Frontend to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-frontend'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - '${_FRONTEND_SERVICE}'
+      - '--image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/frontend:${SHORT_SHA}'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--memory=512Mi'
+      - '--cpu=1'
+      - '--timeout=10s'
+      - '--max-instances=5'
+      - '--port=80'
+    waitFor: ['push-frontend', 'deploy-backend']
+
+  # Step 7: Get Backend URL and update frontend config
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'update-frontend-config'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        BACKEND_URL=$(gcloud run services describe ${_BACKEND_SERVICE} --region=${_REGION} --format='value(status.url)')
+        echo "Backend URL: $BACKEND_URL"
+        # Update frontend environment variable
+        gcloud run services update ${_FRONTEND_SERVICE} \
+          --region=${_REGION} \
+          --update-env-vars=VITE_API_URL=$BACKEND_URL
+    waitFor: ['deploy-frontend']
+
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/backend:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/backend:latest'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/frontend:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/frontend:latest'
+
+options:
+  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: '1800s'
