@@ -16,7 +16,7 @@ steps:
       - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/backend:${SHORT_SHA}'
       - '-t'
       - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY}/backend:latest'
-      - './backend'
+      - './api'
     waitFor: ['-']
 
   # Step 2: Build Frontend Docker Image
