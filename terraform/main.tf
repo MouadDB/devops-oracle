@@ -118,15 +118,17 @@ resource "google_cloudbuild_trigger" "main_trigger" {
   name        = "devops-oracle-deploy"
   description = "Deploy DevOps Oracle on push to main"
   
+  
   github {
     owner = var.github_owner
     name  = var.github_repo
+
     push {
       branch = "^main$"
     }
   }
   
-  filename = "cloudbuild.yaml"
+  filename = "../cloudbuild.yaml"
   
   substitutions = {
     _REGION           = var.region
@@ -134,6 +136,8 @@ resource "google_cloudbuild_trigger" "main_trigger" {
     _FRONTEND_SERVICE = "devops-oracle-frontend"
     _ARTIFACT_REGISTRY = "devops-oracle"
   }
+
+  service_account = "projects/${var.project_id}/serviceAccounts/${google_service_account.cloud_run_sa.email}"
   
   depends_on = [
     google_project_service.required_apis,
