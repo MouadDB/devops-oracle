@@ -128,7 +128,7 @@ resource "google_cloudbuild_trigger" "main_trigger" {
     }
   }
   
-  filename = "../cloudbuild.yaml"
+  filename = "cloudbuild.yaml"
   
   substitutions = {
     _REGION           = var.region
